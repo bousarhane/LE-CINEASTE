@@ -38,7 +38,7 @@ function run(text: string, options: { bold?: boolean; italic?: boolean; underlin
 function paragraph(
   text: string,
   options: {
-    align?: 'left' | 'right' | 'center';
+    align?: 'left' | 'right' | 'center' | 'start' | 'end';
     bold?: boolean;
     italic?: boolean;
     underline?: boolean;
@@ -59,7 +59,7 @@ function paragraph(
     rtl ? '<w:bidi/>' : '',
     `<w:spacing w:before="${options.before ?? 0}" w:after="${options.after ?? 100}" w:line="${options.line ?? 300}" w:lineRule="auto"/>`,
     options.left || options.right ? `<w:ind w:left="${options.left ?? 0}" w:right="${options.right ?? 0}"/>` : '',
-    `<w:jc w:val="${options.align ?? (rtl ? 'right' : 'left')}"/>`
+    `<w:jc w:val="${options.align ?? (rtl ? 'start' : 'left')}"/>`
   ].join('');
 
   return `<w:p><w:pPr>${pPr}</w:pPr>${run(text, options)}</w:p>`;
@@ -71,7 +71,7 @@ function blockToXml(block: ScreenplayBlock): string {
 
   switch (block.elementType) {
     case 'scene_heading':
-      return paragraph(text, { align: hasArabic(text) ? 'right' : 'left', bold: true, size: 24, before: 220, after: 120, keepNext: true });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', bold: true, size: 24, before: 220, after: 120, keepNext: true });
     case 'character':
       return paragraph(text, { align: 'center', bold: true, size: 24, before: 160, after: 20, keepNext: true });
     case 'parenthetical': {
@@ -79,16 +79,16 @@ function blockToXml(block: ScreenplayBlock): string {
       return paragraph(value, { align: 'center', italic: true, size: 22, after: 20, left: 1350, right: 1350, keepNext: true });
     }
     case 'dialogue':
-      return paragraph(text, { align: hasArabic(text) ? 'right' : 'left', size: 24, after: 120, left: 1450, right: 1450, line: 300 });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', size: 24, after: 120, left: 1450, right: 1450, line: 300 });
     case 'direction':
-      return paragraph(text, { align: hasArabic(text) ? 'right' : 'left', underline: true, size: 23, before: 40, after: 110 });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', underline: true, size: 23, before: 40, after: 110 });
     case 'transition':
       return paragraph(text, { align: 'left', bold: true, size: 23, before: 160, after: 120 });
     case 'action_line':
-      return paragraph(text, { align: hasArabic(text) ? 'right' : 'left', bold: true, size: 24, after: 100 });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', bold: true, size: 24, after: 100 });
     case 'action':
     default:
-      return paragraph(text, { align: hasArabic(text) ? 'right' : 'left', size: 24, after: 100, line: 300 });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', size: 24, after: 100, line: 300 });
   }
 }
 
@@ -107,7 +107,7 @@ function titlePage(snapshot: ProjectSnapshot): string {
     paragraph(projectTypeLabel(snapshot.project.projectType), { align: 'center', size: 22, after: 900 }),
     author ? paragraph('كتابة', { align: 'center', size: 20, after: 80, keepNext: true }) : '',
     author ? paragraph(author, { align: 'center', bold: true, size: 25, after: 0 }) : '',
-    '<w:p><w:pPr><w:bidi/><w:jc w:val="right"/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'
+    '<w:p><w:pPr><w:bidi/><w:jc w:val="start"/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'
   ].join('');
 }
 
@@ -127,7 +127,7 @@ function screenplay(snapshot: ProjectSnapshot): string {
     const hasHeading = scene.blocks.some((block) => block.elementType === 'scene_heading');
     if (!hasHeading) {
       const fallback = scene.heading.trim() || [scene.sceneKind, scene.scenePlace, scene.sceneTime].filter(Boolean).join(' - ');
-      if (fallback) output.push(paragraph(fallback, { align: hasArabic(fallback) ? 'right' : 'left', bold: true, size: 24, before: 220, after: 120, keepNext: true }));
+      if (fallback) output.push(paragraph(fallback, { align: hasArabic(fallback) ? 'start' : 'left', bold: true, size: 24, before: 220, after: 120, keepNext: true }));
     }
 
     for (const block of scene.blocks) output.push(blockToXml(block));
@@ -161,7 +161,7 @@ function stylesXml(): string {
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:docDefaults>
 <w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/><w:rtl/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-MA"/></w:rPr></w:rPrDefault>
-<w:pPrDefault><w:pPr><w:bidi/><w:spacing w:after="100" w:line="300" w:lineRule="auto"/><w:jc w:val="right"/></w:pPr></w:pPrDefault>
+<w:pPrDefault><w:pPr><w:bidi/><w:spacing w:after="100" w:line="300" w:lineRule="auto"/><w:jc w:val="start"/></w:pPr></w:pPrDefault>
 </w:docDefaults>
 <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
 </w:styles>`;
