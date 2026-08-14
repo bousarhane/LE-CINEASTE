@@ -107,7 +107,7 @@ function titlePage(snapshot: ProjectSnapshot): string {
     paragraph(projectTypeLabel(snapshot.project.projectType), { align: 'center', size: 22, after: 900 }),
     author ? paragraph('كتابة', { align: 'center', size: 20, after: 80, keepNext: true }) : '',
     author ? paragraph(author, { align: 'center', bold: true, size: 25, after: 0 }) : '',
-    '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'
+    '<w:p><w:pPr><w:bidi/><w:jc w:val="right"/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'
   ].join('');
 }
 
@@ -145,6 +145,8 @@ ${titlePage(snapshot)}
 ${screenplay(snapshot)}
 <w:sectPr>
 <w:footerReference w:type="default" r:id="rIdFooter"/>
+<w:bidi/>
+<w:rtlGutter/>
 <w:pgSz w:w="11906" w:h="16838"/>
 <w:pgMar w:top="907" w:right="1021" w:bottom="1021" w:left="1021" w:header="454" w:footer="454" w:gutter="0"/>
 <w:cols w:space="708"/>
@@ -158,8 +160,8 @@ function stylesXml(): string {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:docDefaults>
-<w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-MA"/></w:rPr></w:rPrDefault>
-<w:pPrDefault><w:pPr><w:spacing w:after="100" w:line="300" w:lineRule="auto"/></w:pPr></w:pPrDefault>
+<w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/><w:rtl/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-MA"/></w:rPr></w:rPrDefault>
+<w:pPrDefault><w:pPr><w:bidi/><w:spacing w:after="100" w:line="300" w:lineRule="auto"/><w:jc w:val="right"/></w:pPr></w:pPrDefault>
 </w:docDefaults>
 <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
 </w:styles>`;
@@ -168,7 +170,7 @@ function stylesXml(): string {
 function footerXml(): string {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-<w:p><w:pPr><w:jc w:val="center"/></w:pPr>
+<w:p><w:pPr><w:bidi/><w:jc w:val="center"/></w:pPr>
 <w:r><w:fldChar w:fldCharType="begin"/></w:r>
 <w:r><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r>
 <w:r><w:fldChar w:fldCharType="end"/></w:r>
