@@ -1,5 +1,6 @@
 <script lang="ts">
   export let onClose: () => void;
+  // Kept as a compatibility prop while App.svelte is left stable; Fountain is no longer exposed.
   export let onFountain: () => void;
   export let onDocx: () => void;
   export let onPrintScript: () => void;
@@ -7,11 +8,10 @@
 </script>
 <div class="modal-backdrop" on:click={onClose}>
   <div class="modal-card export" on:click|stopPropagation dir="rtl">
-    <div class="modal-head"><div><h2>التصدير المهني</h2><p>ثلاث صيغ معتمدة: PDF وDOCX وFountain. يبقى ملف المشروع الكامل متاحاً كخيار PDF مستقل.</p></div><button class="icon-button" on:click={onClose}>×</button></div>
+    <div class="modal-head"><div><h2>التصدير المهني</h2><p>صيغتا التصدير المعتمدتان للسيناريو: PDF وDOCX.</p></div><button class="icon-button" on:click={onClose}>×</button></div>
     <div class="modal-body options">
       <button class="featured" on:click={onPrintScript}><span>PDF</span><div><b>السيناريو - PDF</b><small>صفحة عنوان ثم سيناريو A4 مضبوط للطباعة والحفظ كـPDF.</small></div><em>←</em></button>
       <button on:click={onDocx}><span>W</span><div><b>السيناريو - DOCX</b><small>ملف Word قابل للتحرير مع RTL وتنسيق مستقل لكل عنصر سيناريو وترقيم الصفحات.</small></div><em>←</em></button>
-      <button on:click={onFountain}><span>F</span><div><b>السيناريو - Fountain</b><small>نسخة نصية منظمة ومتوافقة مع أدوات كتابة السيناريو.</small></div><em>←</em></button>
       <button class="secondary" on:click={onPrintDossier}><span>PDF</span><div><b>ملف المشروع + السيناريو</b><small>الحكاية والشخصيات والأماكن ثم السيناريو، للاستخدام كملف تقديم.</small></div><em>←</em></button>
     </div>
   </div>
