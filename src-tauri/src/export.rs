@@ -1,5 +1,6 @@
 use std::fs;
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
+use tauri_plugin_dialog::DialogExt;
 
 fn safe_name(value: &str) -> String {
     let cleaned: String = value.chars()
@@ -9,47 +10,58 @@ fn safe_name(value: &str) -> String {
     if trimmed.is_empty() { "screenplay".to_string() } else { trimmed.to_string() }
 }
 
-fn export_dir(app: &AppHandle) -> Result<std::path::PathBuf, String> {
-    let base = app.path().document_dir()
-        .or_else(|_| app.path().app_data_dir())
-        .map_err(|e| e.to_string())?;
-    let dir = base.join("Scene Writer");
-    fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    Ok(dir)
+fn choose_save_path(app: &AppHandle, filename: &str, extension: &str, label: &str) -> Result<Option<std::path::PathBuf>, String> {
+    let suggested = format!("{}.{}", safe_name(filename), extension);
+    let selected = app
+        .dialog()
+        .file()
+        .set_title("حفظ الملف")
+        .set_file_name(&suggested)
+        .add_filter(label, &[extension])
+        .blocking_save_file();
+
+    match selected {
+        Some(path) => path.into_path().map(Some).map_err(|e| e.to_string()),
+        None => Ok(None),
+    }
 }
 
 #[tauri::command]
-pub fn export_text_file(
+pub async fn export_text_file(
     app: AppHandle,
     filename: String,
     content: String,
     extension: String,
 ) -> Result<String, String> {
-    let ext = match extension.to_lowercase().as_str() {
-        "fountain" => "fountain",
-        "json" => "json",
-        "txt" => "txt",
+    let (ext, label) = match extension.to_lowercase().as_str() {
+        "fountain" => ("fountain", "Fountain"),
+        "json" => ("json", "JSON"),
+        "txt" => ("txt", "Text"),
         _ => return Err("صيغة تصدير غير مدعومة.".into()),
     };
 
-    let path = export_dir(&app)?.join(format!("{}.{}", safe_name(&filename), ext));
+    let Some(path) = choose_save_path(&app, &filename, ext, label)? else {
+        return Ok(String::new());
+    };
     fs::write(&path, content.as_bytes()).map_err(|e| e.to_string())?;
     Ok(path.to_string_lossy().to_string())
 }
 
 #[tauri::command]
-pub fn export_binary_file(
+pub async fn export_binary_file(
     app: AppHandle,
     filename: String,
     bytes: Vec<u8>,
     extension: String,
 ) -> Result<String, String> {
-    let ext = match extension.to_lowercase().as_str() {
-        "docx" => "docx",
+    let (ext, label) = match extension.to_lowercase().as_str() {
+        "docx" => ("docx", "Word document"),
         _ => return Err("صيغة ملف ثنائي غير مدعومة.".into()),
     };
 
-    let path = export_dir(&app)?.join(format!("{}.{}", safe_name(&filename), ext));
+    let Some(path) = choose_save_path(&app, &filename, ext, label)? else {
+        return Ok(String::new());
+    };
     fs::write(&path, bytes).map_err(|e| e.to_string())?;
     Ok(path.to_string_lossy().to_string())
 }
