@@ -1,13 +1,17 @@
 import type { ProjectSnapshot, ScreenplayBlock } from './types';
 import { episodeLabel, orderedScenes } from './structure';
 
+function escapeFountainText(text: string): string {
+  return text.replace(/\r\n?/g, '\n');
+}
+
 function blockToFountain(block: ScreenplayBlock): string {
-  const text = block.text.trimEnd();
+  const text = escapeFountainText(block.text).trimEnd();
   switch (block.elementType) {
     case 'scene_heading':
-      return text;
+      return text ? `.${text.replace(/^\./, '')}` : '';
     case 'character':
-      return text;
+      return text ? `@${text.replace(/^@/, '')}` : '';
     case 'parenthetical':
       return text.startsWith('(') ? text : `(${text})`;
     case 'direction':
@@ -27,17 +31,19 @@ export function toFountain(snapshot: ProjectSnapshot): string {
 
   let lastEpisodeId = '';
   orderedScenes(snapshot).forEach((scene) => {
-      if (snapshot.project.projectType === 'series' && scene.episodeId && scene.episodeId !== lastEpisodeId) {
-        lastEpisodeId = scene.episodeId;
-        lines.push(`/* ${episodeLabel(snapshot, scene.episodeId)} */`, '');
-      }
-      scene.blocks.forEach((block) => {
-        const line = blockToFountain(block);
-        lines.push(line);
-        if (block.elementType !== 'dialogue') lines.push('');
-      });
-      lines.push('');
+    if (snapshot.project.projectType === 'series' && scene.episodeId && scene.episodeId !== lastEpisodeId) {
+      lastEpisodeId = scene.episodeId;
+      lines.push(`/* ${episodeLabel(snapshot, scene.episodeId)} */`, '');
+    }
+
+    scene.blocks.forEach((block) => {
+      const line = blockToFountain(block);
+      if (!line && block.elementType !== 'dialogue') return;
+      lines.push(line);
+      if (block.elementType !== 'dialogue') lines.push('');
     });
+    lines.push('');
+  });
 
   return lines.join('\n').replace(/\n{4,}/g, '\n\n\n').trim() + '\n';
 }
