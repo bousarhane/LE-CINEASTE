@@ -1,0 +1,70 @@
+/* Shared screenplay layout refinements.
+   Kept outside ScreenplayEditor.svelte so the stable editor component remains untouched. */
+
+/* Dialogue: the dialogue block and every line inside it remain visually centered. */
+.screenplay-block.block-dialogue {
+  width: 66% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.screenplay-block.block-dialogue .block-text {
+  text-align: center !important;
+  unicode-bidi: plaintext;
+}
+
+/* Description/action: keep a readable line length instead of using the full paper width. */
+.screenplay-block.block-action {
+  width: 86% !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  margin-bottom: 7px !important;
+}
+.screenplay-block.block-action .block-text {
+  text-align: right !important;
+}
+
+/* Short action lines use the same readable measure while staying on the RTL start edge. */
+.screenplay-block.block-action-line {
+  width: 86% !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/* Transition: always occupy the opposite side of an RTL screenplay page. */
+.screenplay-block.block-transition {
+  width: 68% !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+.screenplay-block.block-transition .block-text {
+  text-align: left !important;
+  direction: rtl;
+}
+
+/* PDF/print output follows the same visual rules. */
+@media print {
+  .print-dialogue {
+    width: 62% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+  }
+  .print-action {
+    width: 86% !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+  }
+  .print-action-line {
+    width: 86% !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+  }
+  .print-transition {
+    width: 65% !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    text-align: left !important;
+  }
+}
