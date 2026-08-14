@@ -20,12 +20,12 @@ function runXml(text: string, options: { bold?: boolean; italic?: boolean; under
   const rtl = hasArabic(text);
   const props = [
     '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/>',
-    `<w:sz w:val="${options.size ?? 24}"/><w:szCs w:val="${options.size ?? 24}"/>`,
-    '<w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-MA"/>',
-    rtl ? '<w:rtl/>' : '',
     options.bold ? '<w:b/>' : '',
     options.italic ? '<w:i/>' : '',
-    options.underline ? '<w:u w:val="single"/>' : ''
+    `<w:sz w:val="${options.size ?? 24}"/><w:szCs w:val="${options.size ?? 24}"/>`,
+    options.underline ? '<w:u w:val="single"/>' : '',
+    rtl ? '<w:rtl/>' : '',
+    '<w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-MA"/>'
   ].join('');
 
   const parts = text.split(/\n/);
@@ -56,15 +56,15 @@ function paragraphXml(
 ): string {
   const bidi = options.bidi ?? hasArabic(text);
   const pPr = [
-    bidi ? '<w:bidi/>' : '',
-    `<w:jc w:val="${options.align ?? (bidi ? 'right' : 'left')}"/>`,
-    `<w:spacing w:before="${options.before ?? 0}" w:after="${options.after ?? 100}" w:line="${options.line ?? 320}" w:lineRule="auto"/>`,
     options.keepNext ? '<w:keepNext/>' : '',
     options.keepLines ? '<w:keepLines/>' : '',
     options.pageBreakBefore ? '<w:pageBreakBefore/>' : '',
+    bidi ? '<w:bidi/>' : '',
+    `<w:spacing w:before="${options.before ?? 0}" w:after="${options.after ?? 100}" w:line="${options.line ?? 320}" w:lineRule="auto"/>`,
     options.leftIndent || options.rightIndent
       ? `<w:ind w:left="${options.leftIndent ?? 0}" w:right="${options.rightIndent ?? 0}"/>`
-      : ''
+      : '',
+    `<w:jc w:val="${options.align ?? (bidi ? 'right' : 'left')}"/>`
   ].join('');
   return `<w:p><w:pPr>${pPr}</w:pPr>${runXml(text, options)}</w:p>`;
 }
@@ -149,11 +149,11 @@ function documentXml(snapshot: ProjectSnapshot): string {
     ${screenplayBodyXml(snapshot)}
     <w:sectPr>
       <w:footerReference w:type="default" r:id="rId1"/>
-      <w:titlePg/>
       <w:pgSz w:w="11906" w:h="16838"/>
       <w:pgMar w:top="907" w:right="1021" w:bottom="1021" w:left="1021" w:header="454" w:footer="454" w:gutter="0"/>
       <w:pgNumType w:start="1"/>
       <w:cols w:space="708"/>
+      <w:titlePg/>
       <w:docGrid w:linePitch="360"/>
     </w:sectPr>
   </w:body>
@@ -216,7 +216,7 @@ const DOCUMENT_RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 </Relationships>`;
 
 const APP_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>Scene Writer</Application><AppVersion>0.8.0</AppVersion></Properties>`;
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>Scene Writer</Application><AppVersion>0.8000</AppVersion></Properties>`;
 
 let crcTable: Uint32Array | null = null;
 function makeCrcTable(): Uint32Array {
