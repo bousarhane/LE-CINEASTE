@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { ProjectType } from '../lib/types';
-  import AppIcon from './AppIcon.svelte';
   import IconButton from './IconButton.svelte';
 
   export let title = 'تحرير السيناريو';
@@ -14,6 +13,7 @@
   export let onProjectFile: () => void;
   export let onImportPaste: () => void;
   export let onImportDocx: () => void;
+  // Kept as compatibility props while App.svelte is left stable; Fountain is no longer exposed in the UI.
   export let onImportFountain: () => void;
   export let onFountain: () => void;
   export let onExport: () => void;
@@ -75,13 +75,9 @@
           <button type="button" on:click={() => chooseImport(onImportDocx)}>
             <b>Word · DOCX</b><small>استخراج الفقرات ثم المعاينة</small>
           </button>
-          <button type="button" on:click={() => chooseImport(onImportFountain)}>
-            <b>Fountain</b><small>قراءة البنية الصريحة ثم المعاينة</small>
-          </button>
         </div>
       {/if}
     </div>
-    <IconButton icon="fountain" label="معاينة Fountain" onClick={onFountain} />
     <IconButton icon="sparkles" label="المساعد التحليلي" onClick={onAi} />
     <IconButton icon="export" label="تصدير" primary onClick={onExport} />
   </div>
