@@ -1,0 +1,22 @@
+[package]
+name = "scene-writer"
+version = "0.8.0"
+description = "Scene Writer - Arabic-first screenplay editor"
+authors = ["Bousarhane"]
+edition = "2021"
+
+[lib]
+name = "scene_writer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.40", features = ["bundled"] }
+
+# Keep this Tauri crate isolated from accidental Cargo.toml files in parent folders.
+[workspace]
