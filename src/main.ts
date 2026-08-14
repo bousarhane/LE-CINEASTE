@@ -1,4 +1,5 @@
 import './app.css';
+import './screenplay-format-overrides.css';
 import App from './App.svelte';
 import { mount } from 'svelte';
 
