@@ -79,16 +79,16 @@ function blockToXml(block: ScreenplayBlock): string {
       return paragraph(value, { align: 'center', italic: true, size: 22, after: 20, left: 1350, right: 1350, keepNext: true });
     }
     case 'dialogue':
-      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', size: 24, after: 120, left: 1450, right: 1450, line: 300 });
+      return paragraph(text, { align: 'center', size: 24, after: 120, left: 1450, right: 1450, line: 300 });
     case 'direction':
       return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', underline: true, size: 23, before: 40, after: 110 });
     case 'transition':
-      return paragraph(text, { align: 'left', bold: true, size: 23, before: 160, after: 120 });
+      return paragraph(text, { align: hasArabic(text) ? 'end' : 'right', bold: true, size: 23, before: 160, after: 120 });
     case 'action_line':
-      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', bold: true, size: 24, after: 100 });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', bold: true, size: 24, after: 100, left: 0, right: 900 });
     case 'action':
     default:
-      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', size: 24, after: 100, line: 300 });
+      return paragraph(text, { align: hasArabic(text) ? 'start' : 'left', size: 24, after: 100, line: 300, left: 0, right: 900 });
   }
 }
 
